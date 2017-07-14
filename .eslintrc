@@ -7,7 +7,6 @@
   "parser": "babel-eslint",
   "rules": {
     "comma-dangle": 0,
-    "sort-keys": "error",
     "import/prefer-default-export": 0,
     "react/jsx-filename-extension": 0,
     "react/require-default-props": 0,

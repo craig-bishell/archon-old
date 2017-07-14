@@ -12,6 +12,9 @@ const routes = [{
 }, {
   name: Routes.HELLO_USER,
   path: '/hello-user'
+}, {
+  name: Routes.WEAPON,
+  path: '/weapon'
 }];
 
 export default () =>

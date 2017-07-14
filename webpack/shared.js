@@ -13,7 +13,7 @@ module.exports = {
     }, {
       id: 'style',
       test: /\.styl$/,
-      loader: 'style!css!autoprefixer!stylus',
+      loader: 'style!css!postcss!stylus',
       include: path.resolve(__dirname, '../styles')
     }, {
       id: 'css',

@@ -1,11 +1,10 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import buildActionCreators from 'src/helpers/buildActionCreators';
 import * as ActionTypes from 'src/constants/actionTypes';
 import * as CounterSelectors from 'src/selectors/counterSelectors';
-
-import 'styles/counter.styl';
 
 const Counter = ({ value, onDecrement, onIncrement }) => (
   <div className="counter">
