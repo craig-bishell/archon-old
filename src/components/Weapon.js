@@ -5,12 +5,13 @@ import { uniq } from 'lodash';
 
 import { BASE_WEAPONS, WEAPON_TYPES } from 'src/effects/data';
 import { baseWeaponToOption } from 'src/helpers/selectOptions';
-import { getWeaponTypeChoices } from 'src/helpers/weapons';
+import { getWeaponTypes } from 'src/helpers/weaponType';
 import WeaponDetails from './WeaponDetails';
-import WeaponTypeChoiceSelect from './WeaponTypeChoiceSelect';
-import WeaponVariationSelect from './WeaponVariationSelect';
+import WeaponTypeSelect from './WeaponTypeSelect';
+import VariationSelect from './VariationSelect';
 
-const isWeaponTypeChoice = weaponType => weaponType.includes('|');
+const isWeaponTypeOption = weaponType => weaponType.includes('|');
+
 
 export default class Weapon extends Component {
 
@@ -18,54 +19,95 @@ export default class Weapon extends Component {
     super(...args);
     this.state = {
       baseWeaponOptions: BASE_WEAPONS.map(baseWeaponToOption),
+      weaponTypeOptions: [],
       variationOptions: [],
+      modificationOptions: [],
 
       baseWeapon: undefined,
       weaponTypes: {},
       variations: {},
-      modifications: [],
+      modifications: {},
     };
   }
 
-  baseWeaponSelected = (baseWeapon) => {
-    const reduced = baseWeapon.types
-      .reduce((variationTypes, weaponType) =>
-        variationTypes.concat(getWeaponTypeChoices(weaponType)
-          .reduce((types, type) => types.concat(WEAPON_TYPES[type]), [])
-        )
-      , []);
-    return this.setState({
-      baseWeapon,
+  getWeaponChoiceOptions = baseWeapon => baseWeapon &&
+    baseWeapon.types
+      .filter(type => isWeaponTypeOption(type));
 
-      variationOptions: uniq(reduced),
+  getVariationOptions = (baseWeapon, weaponTypes = {}) => uniq(
+    getWeaponTypes(baseWeapon, weaponTypes)
+      .reduce(
+        (variationTypes, type) => WEAPON_TYPES[type]
+          ? variationTypes.concat(WEAPON_TYPES[type])
+          : variationTypes,
+        []
+      )
+  );
 
-      weaponTypeChoices: {},
-      variations: {},
-      modifications: [],
-    });
-  };
+  getModificationOptions = () => {};
 
-  weaponTypeSelected = weaponType => this.setState({
-    weaponTypeChoices: {
-      ...this.state.weaponTypeChoices,
-      [weaponType.type]: weaponType.value,
-    }
+  baseWeaponSelected = baseWeapon => this.setState({
+    baseWeapon,
+    weaponTypeOptions: this.getWeaponChoiceOptions(baseWeapon),
+    variationOptions: this.getVariationOptions(baseWeapon),
+
+    weaponTypes: {},
+    variations: {},
+    modifications: [],
   });
 
-  variationSelected = variation => this.setState({
-    variations: {
-      ...this.state.variations,
-      [variation.type]: variation.value,
-    }
+  weaponTypeSelected = weaponType => this.setState(
+    ({ baseWeapon, weaponTypes, variations }) => {
+      const newWeaponTypes = weaponType.value
+        ? {
+          ...weaponTypes,
+          [weaponType.type]: weaponType.value,
+        } : Object
+            .keys(weaponTypes)
+            .filter(currentType => currentType !== weaponType.type)
+            .reduce((currentTypes, nextType) => ({
+              ...currentTypes,
+              [nextType]: weaponTypes[nextType],
+            }), {});
+      const variationOptions = this.getVariationOptions(baseWeapon, newWeaponTypes);
+      const newVariations = variationOptions
+        .reduce((currentVariations, variationType) => variations[variationType]
+          ? {
+            ...currentVariations,
+            [variationType]: variations[variationType],
+          } : currentVariations, {});
+
+      return {
+        weaponTypes: newWeaponTypes,
+        variationOptions,
+        variations: newVariations,
+      };
+    });
+
+  variationSelected = variation => this.setState(({ variations }) => {
+    const newVariations = variation.value
+      ? {
+        ...variations,
+        [variation.type]: variation.value,
+      } : Object
+            .keys(variations)
+            .filter(currentVar => currentVar !== variation.type)
+            .reduce((currentVars, nextVar) => ({
+              ...currentVars,
+              [nextVar]: variations[nextVar],
+            }), {});
+
+    return { variations: newVariations };
   });
 
   render() {
     const {
       baseWeaponOptions,
+      weaponTypeOptions,
       variationOptions,
 
       baseWeapon,
-      weaponTypeChoices,
+      weaponTypes,
       variations,
     } = this.state;
     return (
@@ -81,12 +123,12 @@ export default class Weapon extends Component {
           onChange={this.baseWeaponSelected}
         />
 
-        {baseWeapon && baseWeapon.types
-          .filter(type => isWeaponTypeChoice(type))
+        {weaponTypeOptions && weaponTypeOptions
           .map(type => (
-            <WeaponTypeChoiceSelect
+            <WeaponTypeSelect
+              key={type}
               weaponType={type}
-              weaponTypeChoices={weaponTypeChoices}
+              weaponTypes={weaponTypes}
               onChange={this.weaponTypeSelected}
             />
           ))
@@ -94,18 +136,20 @@ export default class Weapon extends Component {
 
         {variationOptions && variationOptions
           .map(variationOption => (
-            <WeaponVariationSelect
+            <VariationSelect
+              key={variationOption}
               variationType={variationOption}
               variations={variations}
-              onChange={this.weaponVariationSelected}
+              onChange={this.variationSelected}
             />
           ))
         }
 
         {baseWeapon &&
           <WeaponDetails
-            baseWeapon={this.state.baseWeapon}
-            weaponTypeChoices={this.state.weaponTypeChoices}
+            baseWeapon={baseWeapon}
+            weaponTypes={weaponTypes}
+            variations={variations}
           />
         }
       </div>

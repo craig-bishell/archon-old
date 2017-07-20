@@ -1,6 +1,6 @@
 import capitalise from './capitalise';
 
-const toValueName = value => value.name;
+const toValueName = value => value && value.name;
 const toValueIdentity = value => value;
 
 const valueToOption = (toLabel = toValueName, toValue = toValueIdentity) => value => ({
@@ -11,11 +11,17 @@ const valueToOption = (toLabel = toValueName, toValue = toValueIdentity) => valu
 export const baseWeaponToOption = valueToOption();
 
 export const weaponTypeToOption = type => valueToOption(
-  value => capitalise(value),
+  value => value && capitalise(value),
   value => ({
     type,
     value,
   })
 );
 
-export const variationToOption = valueToOption();
+export const variationToOption = type => valueToOption(
+  toValueName,
+  value => ({
+    type,
+    value,
+  })
+);

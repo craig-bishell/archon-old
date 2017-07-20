@@ -4,20 +4,17 @@ import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { startsWithSegment } from 'router5.helpers';
 
-import Counter from 'src/components/Counter';
-import HelloUser from 'src/components/HelloUser';
+import Character from 'src/components/Character';
 import Weapon from 'src/components/Weapon';
 import Link from 'src/components/Link';
 import NotFound from 'src/components/NotFound';
 import * as Routes from 'src/constants/routes';
 
 const renderContent = (testRoute) => {
-  if (testRoute(Routes.WEAPON) || testRoute(Routes.INDEX)) {
+  if (testRoute(Routes.CHARACTER) || testRoute(Routes.INDEX)) {
+    return <Character />;
+  } else if (testRoute(Routes.WEAPON)) {
     return <Weapon />;
-  } else if (testRoute(Routes.HELLO_USER)) {
-    return <HelloUser />;
-  } else if (testRoute(Routes.COUNTER)) {
-    return <Counter />;
   }
 
   return <NotFound />;
@@ -30,9 +27,8 @@ const Index = ({ route: { name } }) => {
     <div>
       <h1>Archon</h1>
       <nav>
-        <Link name={Routes.WEAPON}>Weapon</Link>&nbsp;|&nbsp;
-        <Link name={Routes.COUNTER}>Counter</Link>&nbsp;|&nbsp;
-        <Link name={Routes.HELLO_USER}>Hello User</Link>
+        <Link name={Routes.CHARACTER}>Character</Link>&nbsp;|&nbsp;
+        <Link name={Routes.WEAPON}>Weapon</Link>
       </nav>
       <div>
         {renderContent(testRoute)}

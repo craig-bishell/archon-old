@@ -5,16 +5,13 @@ import * as Routes from 'src/constants/routes';
 
 const routes = [{
   name: Routes.INDEX,
-  path: '/'
+  path: '/',
 }, {
-  name: Routes.COUNTER,
-  path: '/counter'
-}, {
-  name: Routes.HELLO_USER,
-  path: '/hello-user'
+  name: Routes.CHARACTER,
+  path: '/counter',
 }, {
   name: Routes.WEAPON,
-  path: '/weapon'
+  path: '/weapon',
 }];
 
 export default () =>

@@ -25,7 +25,7 @@ export const WEAPON_TYPES = {
 export const WEAPON_VARIATIONS = {
   gun: [
     {
-      name: 'Burst Spores', hit: -2, rng: 1, types: ['chemical'], cost: 1, specials: ['Small', 'Bio Tech', 'Splash +1|+1 End Dmg', 'Cost Spare Time Roll 10t']
+      name: 'Burst Spores', hit: -2, rng: 1, types: ['chemical'], cost: 1, specials: ['Bio Tech', 'Splash +1|+1 End Dmg', 'Cost Spare Time Roll 10t']
     },
     {
       name: 'Gauss', rof: 1, cost: 1, specials: ['Jam (1-3)']
