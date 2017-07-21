@@ -25,3 +25,5 @@ export const variationToOption = type => valueToOption(
     value,
   })
 );
+
+export const modificationToOption = valueToOption();

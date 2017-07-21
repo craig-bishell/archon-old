@@ -3,8 +3,8 @@ import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { uniq } from 'lodash';
 
-import { BASE_WEAPONS, WEAPON_TYPES } from 'src/effects/data';
-import { baseWeaponToOption } from 'src/helpers/selectOptions';
+import { WEAPONS, WEAPON_TYPE_VARIATIONS, WEAPON_TYPE_MODIFICATIONS, MODIFICATIONS } from 'src/effects/data';
+import { baseWeaponToOption, modificationToOption } from 'src/helpers/selectOptions';
 import { getWeaponTypes } from 'src/helpers/weaponType';
 import WeaponDetails from './WeaponDetails';
 import WeaponTypeSelect from './WeaponTypeSelect';
@@ -18,7 +18,7 @@ export default class Weapon extends Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      baseWeaponOptions: BASE_WEAPONS.map(baseWeaponToOption),
+      baseWeaponOptions: WEAPONS.map(baseWeaponToOption),
       weaponTypeOptions: [],
       variationOptions: [],
       modificationOptions: [],
@@ -26,7 +26,7 @@ export default class Weapon extends Component {
       baseWeapon: undefined,
       weaponTypes: {},
       variations: {},
-      modifications: {},
+      modifications: [],
     };
   }
 
@@ -34,22 +34,36 @@ export default class Weapon extends Component {
     baseWeapon.types
       .filter(type => isWeaponTypeOption(type));
 
-  getVariationOptions = (baseWeapon, weaponTypes = {}) => uniq(
-    getWeaponTypes(baseWeapon, weaponTypes)
-      .reduce(
-        (variationTypes, type) => WEAPON_TYPES[type]
-          ? variationTypes.concat(WEAPON_TYPES[type])
-          : variationTypes,
-        []
-      )
-  );
+  getVariationOptions = (baseWeapon, weaponTypes = {}) =>
+    uniq(
+      getWeaponTypes(baseWeapon, weaponTypes)
+        .reduce(
+          (variationTypes, type) => WEAPON_TYPE_VARIATIONS[type]
+            ? variationTypes.concat(WEAPON_TYPE_VARIATIONS[type])
+            : variationTypes,
+          []
+        )
+    );
 
-  getModificationOptions = () => {};
+  getModificationOptions = (baseWeapon, weaponTypes = {}, variations = {}) =>
+    uniq(
+      getWeaponTypes(baseWeapon, weaponTypes, variations)
+        .reduce(
+          (modificationTypes, type) => WEAPON_TYPE_MODIFICATIONS[type]
+            ? modificationTypes.concat(WEAPON_TYPE_MODIFICATIONS[type])
+            : modificationTypes,
+          []
+        )
+    ).reduce((modifications, modificationType) => [
+      ...modifications,
+      ...MODIFICATIONS[modificationType],
+    ], []);
 
   baseWeaponSelected = baseWeapon => this.setState({
     baseWeapon,
     weaponTypeOptions: this.getWeaponChoiceOptions(baseWeapon),
     variationOptions: this.getVariationOptions(baseWeapon),
+    modificationOptions: this.getModificationOptions(baseWeapon),
 
     weaponTypes: {},
     variations: {},
@@ -70,6 +84,7 @@ export default class Weapon extends Component {
               [nextType]: weaponTypes[nextType],
             }), {});
       const variationOptions = this.getVariationOptions(baseWeapon, newWeaponTypes);
+
       const newVariations = variationOptions
         .reduce((currentVariations, variationType) => variations[variationType]
           ? {
@@ -78,13 +93,19 @@ export default class Weapon extends Component {
           } : currentVariations, {});
 
       return {
-        weaponTypes: newWeaponTypes,
         variationOptions,
+        modificationOptions: this.getModificationOptions(
+          baseWeapon,
+          newWeaponTypes,
+          newVariations
+        ),
+
+        weaponTypes: newWeaponTypes,
         variations: newVariations,
       };
     });
 
-  variationSelected = variation => this.setState(({ variations }) => {
+  variationSelected = variation => this.setState(({ baseWeapon, weaponTypes, variations }) => {
     const newVariations = variation.value
       ? {
         ...variations,
@@ -97,7 +118,19 @@ export default class Weapon extends Component {
               [nextVar]: variations[nextVar],
             }), {});
 
-    return { variations: newVariations };
+    return {
+      modificationOptions: this.getModificationOptions(
+        baseWeapon,
+        weaponTypes,
+        newVariations
+      ),
+
+      variations: newVariations,
+    };
+  });
+
+  modificationSelected = modifications => this.setState({
+    modifications: modifications.map(modification => modification.value),
   });
 
   render() {
@@ -105,10 +138,12 @@ export default class Weapon extends Component {
       baseWeaponOptions,
       weaponTypeOptions,
       variationOptions,
+      modificationOptions,
 
       baseWeapon,
       weaponTypes,
       variations,
+      modifications,
     } = this.state;
     return (
       <div className="weapon">
@@ -145,11 +180,22 @@ export default class Weapon extends Component {
           ))
         }
 
+        {modificationOptions.length > 0 &&
+          <Select
+            multi
+            value={modifications.map(modificationToOption)}
+            placeholder={'Select modifications'}
+            options={modificationOptions.map(modificationToOption)}
+            onChange={this.modificationSelected}
+          />
+        }
+
         {baseWeapon &&
           <WeaponDetails
             baseWeapon={baseWeapon}
             weaponTypes={weaponTypes}
             variations={variations}
+            modifications={modifications}
           />
         }
       </div>

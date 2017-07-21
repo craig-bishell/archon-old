@@ -1,4 +1,4 @@
-export const BASE_WEAPONS = [
+export const WEAPONS = [
   {
     name: 'Pistol', hit: 1, endDmg: 3, crit: 3, rng: 4, clips: 4, ammo: 'rofx6', load: 1, rof: 1, wgt: 1, types: ['gun'], cost: 1, specials: ['Small']
   },
@@ -16,13 +16,18 @@ export const BASE_WEAPONS = [
   },
 ];
 
-export const WEAPON_TYPES = {
+export const WEAPON_TYPE_VARIATIONS = {
   gun: ['gun', 'gunSize'],
   shell: ['shell', 'gunSize'],
   chemical: ['chemical', 'gunSize'],
 };
 
-export const WEAPON_VARIATIONS = {
+export const WEAPON_TYPE_MODIFICATIONS = {
+  gun: ['nonMelee', 'nonMeleeOrMeleeThrown', 'nonThrown'],
+  shell: ['nonMelee', 'nonMeleeOrMeleeThrown', 'nonThrown'],
+};
+
+export const VARIATIONS = {
   gun: [
     {
       name: 'Burst Spores', hit: -2, rng: 1, types: ['chemical'], cost: 1, specials: ['Bio Tech', 'Splash +1|+1 End Dmg', 'Cost Spare Time Roll 10t']
@@ -100,4 +105,28 @@ export const WEAPON_VARIATIONS = {
       name: 'Tiny', endDmg: -1, crit: -1, rng: -2, clips: -1, load: -1, wgt: -1, cost: -1, specials: ['If Weight is under 2 it is ‘Small’', '+4 to hide Weapon']
     },
   ],
+};
+
+export const MODIFICATIONS = {
+  nonMeleeOrMeleeThrown: [
+    {
+      name: 'Advanced Ammo', hit: 1, rng: 1, cost: 1
+    },
+  ],
+  nonMelee: [
+    {
+      name: 'Advanced Modification', cost: 1, specials: ['Bio Tech|Blunt|Burn|Energy|Low Tech|type:Psionic']
+    },
+    {
+      name: 'Archon Round', rng: 1, cost: '18t', specials: ['Optional', 'For a single RoF 1 Attack, Strong Hit +1, Pen 1 min 4']
+    },
+    {
+      name: 'Archon Tech', endDmg: -1, rng: 1, clips: -1, cost: 5, specials: ['Archon Tech', '-Low Tech', 'Strong Hit +1', 'Requires Secret Knowledge to build if not found']
+    },
+  ],
+  nonThrown: [
+    {
+      name: 'Dual Wield', hit: -2, endDmg: 2, clips: -1, load: 1, rof: 1, wgt: 1, cost: 1, specials: ['Optional', '1 Handed Weapons only (usually Weight 1)', 'If Gauntlet: takes 2 Gauntlet Slots']
+    },
+  ]
 };

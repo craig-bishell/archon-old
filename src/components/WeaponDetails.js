@@ -43,52 +43,65 @@ const formatStrongHits = strongHits => strongHits.map(strongHit => (
   </tr>
 ));
 
+const applyToWeapon = (weapon, toApply) => ({
+  name: [toApply.name, ...weapon.name],
+  hit: (weapon.hit || 0) + (toApply.hit || 0),
+  endDmg: (weapon.endDmg || 0) + (toApply.endDmg || 0),
+  crit: (weapon.crit || 0) + (toApply.crit || 0),
+  rng: (weapon.rng || 0) + (toApply.rng || 0),
+  clips: (weapon.clips || 0) + (toApply.clips || 0),
+  ammo: toApply.ammo
+    ? [...weapon.ammo, toApply.ammo]
+    : weapon.ammo,
+  load: (weapon.load || 0) + (toApply.load || 0),
+  rof: (weapon.rof || 0) + (toApply.rof || 0),
+  wgt: (weapon.wgt || 0) + (toApply.wgt || 0),
+  types: toApply.types ?
+    [...weapon.types, ...toApply.types]
+    : weapon.types,
+  cost: (weapon.cost || 0) + (toApply.cost || 0),
+  specials: toApply.specials
+    ? [...weapon.specials, ...toApply.specials]
+    : weapon.specials,
+  strongHits: toApply.strongHits
+    ? [...weapon.strongHits, ...toApply.strongHits]
+    : weapon.strongHits,
+});
+
 export default class WeaponDetails extends Component {
 
-  getWeapon = () => {
-    const { baseWeapon, variations } = this.props;
+  getBaseWeapon = () => {
+    const { baseWeapon } = this.props;
+    return {
+      name: [baseWeapon.name],
+      hit: baseWeapon.hit,
+      endDmg: baseWeapon.endDmg,
+      crit: baseWeapon.crit,
+      rng: baseWeapon.rng,
+      clips: baseWeapon.clips,
+      ammo: [baseWeapon.ammo],
+      load: baseWeapon.load,
+      rof: baseWeapon.rof,
+      wgt: baseWeapon.wgt,
+      types: baseWeapon.types,
+      cost: baseWeapon.cost,
+      specials: baseWeapon.specials || [],
+      strongHits: baseWeapon.strongHits || [],
+    };
+  };
+
+  applyVariations = (weapon) => {
+    const { variations } = this.props;
     return Object
       .values(variations)
-      .reduce((reduced, variation) => ({
-        name: [variation.name, ...reduced.name],
-        hit: (reduced.hit || 0) + (variation.hit || 0),
-        endDmg: (reduced.endDmg || 0) + (variation.endDmg || 0),
-        crit: (reduced.crit || 0) + (variation.crit || 0),
-        rng: (reduced.rng || 0) + (variation.rng || 0),
-        clips: (reduced.clips || 0) + (variation.clips || 0),
-        ammo: variation.ammo
-          ? [...reduced.ammo, variation.ammo]
-          : reduced.ammo,
-        load: (reduced.load || 0) + (variation.load || 0),
-        rof: (reduced.rof || 0) + (variation.rof || 0),
-        wgt: (reduced.wgt || 0) + (variation.wgt || 0),
-        types: variation.types ?
-          [...reduced.types, ...variation.types]
-          : reduced.types,
-        cost: (reduced.cost || 0) + (variation.cost || 0),
-        specials: variation.specials
-          ? [...reduced.specials, ...variation.specials]
-          : reduced.specials,
-        strongHits: variation.strongHits
-          ? [...reduced.strongHits, ...variation.strongHits]
-          : reduced.strongHits,
-      }), {
-        name: [baseWeapon.name],
-        hit: baseWeapon.hit,
-        endDmg: baseWeapon.endDmg,
-        crit: baseWeapon.crit,
-        rng: baseWeapon.rng,
-        clips: baseWeapon.clips,
-        ammo: [baseWeapon.ammo],
-        load: baseWeapon.load,
-        rof: baseWeapon.rof,
-        wgt: baseWeapon.wgt,
-        types: baseWeapon.types,
-        cost: baseWeapon.cost,
-        specials: baseWeapon.specials || [],
-        strongHits: baseWeapon.strongHits || [],
-      });
+      .reduce(applyToWeapon, weapon);
   };
+
+  applyModifications = (weapon) => {
+    const { modifications } = this.props;
+    return modifications
+      .reduce(applyToWeapon, weapon);
+  }
 
   formatWeaponType = (weaponType) => {
     const { weaponTypes } = this.props;
@@ -120,7 +133,7 @@ export default class WeaponDetails extends Component {
       cost,
       specials,
       strongHits,
-    } = this.getWeapon();
+    } = this.applyModifications(this.applyVariations(this.getBaseWeapon()));
 
     return (
       <div className="weapon-details">
@@ -169,4 +182,5 @@ WeaponDetails.propTypes = {
   baseWeapon: PropTypes.shape(weaponShape).isRequired,
   weaponTypes: PropTypes.object,
   variations: PropTypes.object,
+  modifications: PropTypes.arrayOf(PropTypes.object),
 };

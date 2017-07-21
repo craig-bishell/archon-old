@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
-import { WEAPON_VARIATIONS } from 'src/effects/data';
+import { VARIATIONS } from 'src/effects/data';
 import capitalise from 'src/helpers/capitalise';
 import { variationToOption } from 'src/helpers/selectOptions';
 
@@ -17,7 +17,7 @@ const VariationSelect = ({ variationType, variations, onChange }) => {
       value={selectedVariation && getOption(selectedVariation)}
       resetValue={getOption(null)}
       placeholder={`Select ${capitalise(variationType)} Variation`}
-      options={WEAPON_VARIATIONS[variationType].map(getOption)}
+      options={VARIATIONS[variationType].map(getOption)}
       onChange={onChange}
     />
   );
