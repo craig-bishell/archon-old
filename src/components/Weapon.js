@@ -34,30 +34,35 @@ export default class Weapon extends Component {
     baseWeapon.types
       .filter(type => isWeaponTypeOption(type));
 
-  getVariationOptions = (baseWeapon, weaponTypes = {}) =>
-    uniq(
-      getWeaponTypes(baseWeapon, weaponTypes)
-        .reduce(
-          (variationTypes, type) => WEAPON_TYPE_VARIATIONS[type]
-            ? variationTypes.concat(WEAPON_TYPE_VARIATIONS[type])
-            : variationTypes,
-          []
-        )
-    );
+  getVariationOptions = (baseWeapon, weaponTypes = {}) => {
+    const selectedTypes = getWeaponTypes(baseWeapon, weaponTypes);
+    const options = selectedTypes && selectedTypes
+      .reduce(
+        (variationTypes, type) => WEAPON_TYPE_VARIATIONS[type]
+          ? variationTypes.concat(WEAPON_TYPE_VARIATIONS[type])
+          : variationTypes,
+        []
+      );
+    return uniq(options);
+  };
 
-  getModificationOptions = (baseWeapon, weaponTypes = {}, variations = {}) =>
-    uniq(
-      getWeaponTypes(baseWeapon, weaponTypes, variations)
-        .reduce(
-          (modificationTypes, type) => WEAPON_TYPE_MODIFICATIONS[type]
-            ? modificationTypes.concat(WEAPON_TYPE_MODIFICATIONS[type])
-            : modificationTypes,
-          []
-        )
-    ).reduce((modifications, modificationType) => [
-      ...modifications,
-      ...MODIFICATIONS[modificationType],
-    ], []);
+  getModificationOptions = (baseWeapon, weaponTypes = {}, variations = {}) => {
+    const selectedTypes = getWeaponTypes(baseWeapon, weaponTypes, variations);
+    const options = selectedTypes && selectedTypes
+      .reduce(
+        (modificationTypes, type) => WEAPON_TYPE_MODIFICATIONS[type]
+          ? modificationTypes.concat(WEAPON_TYPE_MODIFICATIONS[type])
+          : modificationTypes,
+        []
+      );
+
+    const uniqueOptions = uniq(options);
+    return uniqueOptions && uniqueOptions
+      .reduce((modifications, modificationType) => [
+        ...modifications,
+        ...MODIFICATIONS[modificationType],
+      ], []);
+  };
 
   baseWeaponSelected = baseWeapon => this.setState({
     baseWeapon,

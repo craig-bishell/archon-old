@@ -18,7 +18,10 @@ export const weaponShape = {
   load: PropTypes.number.isRequired,
   wgt: PropTypes.number.isRequired,
   types: PropTypes.arrayOf(PropTypes.string).isRequired,
-  cost: PropTypes.number.isRequired,
+  cost: PropTypes.arrayOf(PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ])),
   specials: PropTypes.arrayOf(PropTypes.string),
   strongHits: PropTypes.arrayOf(strongHitShape),
 };

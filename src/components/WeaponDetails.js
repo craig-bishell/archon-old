@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { uniq } from 'lodash';
+import { sum, uniq } from 'lodash';
 
 import capitalise from 'src/helpers/capitalise';
 import { getWeaponTypeOptions, formatWeaponTypeOptions } from 'src/helpers/weaponType';
@@ -28,6 +28,14 @@ const formatAmmos = (ammos, rof) => ammos
 const formatRoF = rof => rof > 1
   ? `${rof} (+${rof - 1}d6)`
   : rof;
+
+const formatCost = (costs) => {
+  console.debug(JSON.stringify(costs));
+  const totalCost = sum(costs.filter(cost => Number.isInteger(cost)));
+  const spareTimeRolls = costs.filter(cost => !Number.isInteger(cost));
+  console.debug(totalCost, JSON.stringify(spareTimeRolls));
+  return `${totalCost}${spareTimeRolls.length ? `(${spareTimeRolls.join(',')})` : ''}`;
+};
 
 const formatSpecials = specials => (
   <tr>
@@ -59,7 +67,9 @@ const applyToWeapon = (weapon, toApply) => ({
   types: toApply.types ?
     [...weapon.types, ...toApply.types]
     : weapon.types,
-  cost: (weapon.cost || 0) + (toApply.cost || 0),
+  cost: toApply.cost
+    ? [...weapon.cost, ...toApply.cost]
+    : weapon.cost,
   specials: toApply.specials
     ? [...weapon.specials, ...toApply.specials]
     : weapon.specials,
@@ -84,7 +94,7 @@ export default class WeaponDetails extends Component {
       rof: baseWeapon.rof,
       wgt: baseWeapon.wgt,
       types: baseWeapon.types,
-      cost: baseWeapon.cost,
+      cost: baseWeapon.cost || [],
       specials: baseWeapon.specials || [],
       strongHits: baseWeapon.strongHits || [],
     };
@@ -167,7 +177,7 @@ export default class WeaponDetails extends Component {
               <td>{formatRoF(rof)}</td>
               <td>{wgt}</td>
               <td>{this.formatWeaponTypes(types)}</td>
-              <td>{cost}</td>
+              <td>{formatCost(cost)}</td>
             </tr>
             {specials && formatSpecials(specials)}
             {strongHits && formatStrongHits(strongHits)}
