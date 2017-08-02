@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { sum, uniq } from 'lodash';
 
+import weaponImage from 'assets/weapon.png';
+
 import capitalise from 'src/helpers/capitalise';
 import { getWeaponTypeOptions, formatWeaponTypeOptions } from 'src/helpers/weaponType';
-import { weaponShape } from './propTypeShapes';
+import { weaponShape } from '../propTypeShapes';
 import StrongHitDetails from './StrongHitDetails';
 
 const formatHit = hit => hit // eslint-disable-line no-nested-ternary
@@ -30,10 +32,8 @@ const formatRoF = rof => rof > 1
   : rof;
 
 const formatCost = (costs) => {
-  console.debug(JSON.stringify(costs));
   const totalCost = sum(costs.filter(cost => Number.isInteger(cost)));
   const spareTimeRolls = costs.filter(cost => !Number.isInteger(cost));
-  console.debug(totalCost, JSON.stringify(spareTimeRolls));
   return `${totalCost}${spareTimeRolls.length ? `(${spareTimeRolls.join(',')})` : ''}`;
 };
 
@@ -147,6 +147,7 @@ export default class WeaponDetails extends Component {
 
     return (
       <div className="weapon-details">
+        {this.getBaseWeapon() && <img src={weaponImage} alt="Weapon" />}
         <table>
           <thead>
             <tr>

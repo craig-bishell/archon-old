@@ -16,6 +16,21 @@ export const WEAPONS = [
   },
 ];
 
+export const OUTFITS = [
+  {
+    name: 'Clothing', slots: 8, weight: 0, cost: [0], specials: ['+1 Conversation']
+  },
+  {
+    name: 'Emergency Void Suit', armour: 1, slots: 4, weight: 3, cost: ['10t'], specials: ['Able to function in Space environments.']
+  },
+  {
+    name: 'Combat Suit', armour: 1, slots: 8, weight: 1, cost: [1]
+  },
+  {
+    name: 'Tactical Armour', armour: 2, slots: 10, weight: 2, cost: [2]
+  },
+];
+
 export const WEAPON_TYPE_VARIATIONS = {
   gun: ['gun', 'gunSize'],
   shell: ['shell', 'gunSize'],

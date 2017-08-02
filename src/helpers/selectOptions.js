@@ -3,12 +3,12 @@ import capitalise from './capitalise';
 const toValueName = value => value && value.name;
 const toValueIdentity = value => value;
 
-const valueToOption = (toLabel = toValueName, toValue = toValueIdentity) => value => ({
+const valueToOption = (toLabel, toValue) => value => ({
   label: toLabel(value),
   value: toValue(value),
 });
 
-export const baseWeaponToOption = valueToOption();
+export const defaultValueToOption = valueToOption(toValueName, toValueIdentity);
 
 export const weaponTypeToOption = type => valueToOption(
   value => value && capitalise(value),
@@ -25,5 +25,3 @@ export const variationToOption = type => valueToOption(
     value,
   })
 );
-
-export const modificationToOption = valueToOption();

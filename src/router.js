@@ -8,10 +8,13 @@ const routes = [{
   path: '/',
 }, {
   name: Routes.CHARACTER,
-  path: '/counter',
+  path: '/character',
 }, {
   name: Routes.WEAPON,
   path: '/weapon',
+}, {
+  name: Routes.OUTFIT,
+  path: '/armour',
 }];
 
 export default () =>

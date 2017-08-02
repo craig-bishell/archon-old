@@ -6,6 +6,7 @@ import { startsWithSegment } from 'router5.helpers';
 
 import Character from 'src/components/Character';
 import Weapon from 'src/components/Weapon';
+import Outfit from 'src/components/Outfit';
 import Link from 'src/components/Link';
 import NotFound from 'src/components/NotFound';
 import * as Routes from 'src/constants/routes';
@@ -15,6 +16,8 @@ const renderContent = (testRoute) => {
     return <Character />;
   } else if (testRoute(Routes.WEAPON)) {
     return <Weapon />;
+  } else if (testRoute(Routes.OUTFIT)) {
+    return <Outfit />;
   }
 
   return <NotFound />;
@@ -28,7 +31,8 @@ const Index = ({ route: { name } }) => {
       <h1>Archon</h1>
       <nav>
         <Link name={Routes.CHARACTER}>Character</Link>&nbsp;|&nbsp;
-        <Link name={Routes.WEAPON}>Weapon</Link>
+        <Link name={Routes.WEAPON}>Weapon</Link>&nbsp;|&nbsp;
+        <Link name={Routes.OUTFIT}>Outfit</Link>
       </nav>
       <div>
         {renderContent(testRoute)}
